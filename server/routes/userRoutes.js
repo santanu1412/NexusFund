@@ -6,6 +6,8 @@ import {
   listUsers,
   updateUserRole,
   suspendUser,
+  getMyDonations,
+  changePassword,
 } from '../controllers/userController.js';
 import { protect, requireRole } from '../middleware/authMiddleware.js';
 
@@ -15,6 +17,8 @@ const router = Router();
 router.get('/me', protect, getProfile);
 router.put('/me', protect, updateProfile);
 router.get('/dashboard', protect, getDashboard);
+router.get('/me/donations', protect, getMyDonations);
+router.put('/me/password', protect, changePassword);
 
 // Keep /profile as alias for backward compatibility
 router.get('/profile', protect, getProfile);

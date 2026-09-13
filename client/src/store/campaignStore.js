@@ -34,7 +34,6 @@ export const useCampaignStore = create((set, get) => ({
     }
   },
 
-  // Keep backward compat
   fetchCampaignById: async (id) => {
     return get().fetchCampaignBySlug(id);
   },
@@ -55,12 +54,10 @@ export const useCampaignStore = create((set, get) => ({
   updateCampaignProgress: (id, data) => {
     const { campaigns, currentCampaign } = get();
 
-    // Update list
     const updatedList = campaigns.map(c =>
       c._id === id ? { ...c, ...data } : c
     );
 
-    // Update current view if matches
     let updatedCurrent = currentCampaign;
     if (currentCampaign && currentCampaign._id === id) {
       updatedCurrent = { ...currentCampaign, ...data };

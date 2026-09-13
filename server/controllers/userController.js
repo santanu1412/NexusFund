@@ -219,3 +219,49 @@ export const suspendUser = asyncHandler(async (req, res) => {
     },
   });
 });
+
+/**
+ * @route   GET /api/users/me/donations
+ * @desc    Get current user's donations
+ */
+export const getMyDonations = asyncHandler(async (req, res) => {
+  const donations = await Donation.find({
+    donor: req.user._id,
+    status: 'succeeded',
+  })
+    .populate('campaign', 'title coverImage slug')
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, data: donations });
+});
+
+/**
+ * @route   PUT /api/users/me/password
+ * @desc    Change current user's password
+ */
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    throw new ApiError('Current and new password are required', 400);
+  }
+
+  if (newPassword.length < 6) {
+    throw new ApiError('New password must be at least 6 characters', 400);
+  }
+
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user) {
+    throw new ApiError('User not found', 404);
+  }
+
+  const isMatch = await user.comparePassword(currentPassword);
+  if (!isMatch) {
+    throw new ApiError('Current password is incorrect', 401);
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.json({ success: true, message: 'Password changed successfully' });
+});

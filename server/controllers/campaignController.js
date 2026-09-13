@@ -189,6 +189,19 @@ export const deleteCampaign = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Campaign deleted' });
 });
 
+// ─── Authenticated User Endpoints ────────────────────────────────
+
+/**
+ * @route   GET /api/campaigns/my
+ * @desc    Get current user's campaigns (all statuses)
+ */
+export const getMyCampaigns = asyncHandler(async (req, res) => {
+  const campaigns = await Campaign.find({ beneficiary: req.user._id })
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, data: campaigns });
+});
+
 // ─── Admin Endpoints ─────────────────────────────────────────────
 
 /**

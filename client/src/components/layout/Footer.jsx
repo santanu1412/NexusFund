@@ -1,56 +1,47 @@
 import { Link } from 'react-router-dom';
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="bg-dark border-t border-white/10 pt-16 pb-8 mt-20">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-        <div className="col-span-1 md:col-span-1">
-          <Link to="/" className="text-2xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan to-violet">
-            NEXUS<span className="text-white">FUND</span>
-          </Link>
-          <p className="text-gray-400 mt-4 text-sm leading-relaxed">
-            The decentralized launchpad for the next generation of creators, innovators, and dreamers.
-          </p>
-        </div>
-        
-        <div>
-          <h4 className="font-bold text-white mb-6">Platform</h4>
-          <ul className="space-y-4 text-sm text-gray-400">
-            <li><Link to="/explore" className="hover:text-cyan transition-colors">Browse Campaigns</Link></li>
-            <li><Link to="/create" className="hover:text-cyan transition-colors">Start a Project</Link></li>
-            <li><Link to="/how-it-works" className="hover:text-cyan transition-colors">How it Works</Link></li>
-          </ul>
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-grid">
+          {/* Brand */}
+          <div className="footer-brand">
+            <Link to="/" className="navbar-logo" style={{ color: '#fff', fontSize: '1.25rem' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              NexusFund
+            </Link>
+            <p>A simple crowdfunding platform for everyone. Create campaigns, share your story, and fund what matters to you.</p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="footer-heading">Platform</h4>
+            <Link to="/explore" className="footer-link">Explore Campaigns</Link>
+            <Link to="/create" className="footer-link">Start a Campaign</Link>
+            <Link to="/how-it-works" className="footer-link">How It Works</Link>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h4 className="footer-heading">Support</h4>
+            <Link to="/how-it-works" className="footer-link">FAQs</Link>
+            <a href="mailto:support@nexusfund.com" className="footer-link">Contact Us</a>
+            <Link to="/how-it-works" className="footer-link">Trust & Safety</Link>
+          </div>
         </div>
 
-        <div>
-          <h4 className="font-bold text-white mb-6">Support</h4>
-          <ul className="space-y-4 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-cyan transition-colors">Help Center</a></li>
-            <li><a href="#" className="hover:text-cyan transition-colors">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-cyan transition-colors">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-bold text-white mb-6">Stay Updated</h4>
-          <div className="flex">
-            <input 
-              type="email" 
-              placeholder="Enter email" 
-              className="bg-white/5 border border-white/10 rounded-l px-4 py-2 text-sm text-white focus:border-cyan outline-none w-full"
-            />
-            <button className="bg-cyan text-black font-bold px-4 py-2 rounded-r hover:bg-cyan/90 transition-colors">
-              &rarr;
-            </button>
+        {/* Bottom Bar */}
+        <div className="footer-bottom">
+          <span>&copy; {new Date().getFullYear()} NexusFund. All rights reserved.</span>
+          <div className="flex gap-6">
+            <a href="#" className="footer-link" style={{ padding: 0 }}>Privacy</a>
+            <a href="#" className="footer-link" style={{ padding: 0 }}>Terms</a>
           </div>
         </div>
       </div>
-      
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-white/5 text-center text-gray-600 text-xs">
-        <p>&copy; {new Date().getFullYear()} NexusFund Inc. Built with React & Node.</p>
-      </div>
     </footer>
   );
-};
-
-export default Footer;
+}

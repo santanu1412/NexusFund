@@ -1,53 +1,99 @@
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import ProgressBar from '../ui/ProgressBar';
 
-const CampaignCard = ({ campaign }) => {
-  const percent = Math.min((campaign.raisedAmount / campaign.goalAmount) * 100, 100);
+const categoryColors = {
+  Medical: 'badge-danger',
+  Emergency: 'badge-warning',
+  Education: 'badge-primary',
+  Community: 'badge-success',
+  Memorial: 'badge-neutral',
+  Other: 'badge-neutral',
+};
+
+export default function CampaignCard({ campaign, index = 0 }) {
+  const raised = campaign.amountRaisedCents / 100;
+  const goal = campaign.goalAmountCents / 100;
+  const percentage = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
+
+  const daysLeft = (() => {
+    const now = new Date();
+    const deadline = new Date(campaign.deadline);
+    const diff = deadline - now;
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  })();
+
+  const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className="glass-card overflow-hidden group hover:border-cyan/50 transition-colors duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
     >
-      <div className="relative h-48 overflow-hidden">
-        <img 
-          src={campaign.coverImage} 
-          alt={campaign.title} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute top-2 left-2 bg-dark/80 backdrop-blur px-2 py-1 rounded text-xs font-bold text-cyan border border-cyan/20">
-          {campaign.category}
-        </div>
-      </div>
-      
-      <div className="p-5">
-        <Link to={`/campaigns/${campaign._id}`}>
-          <h3 className="font-orbitron font-bold text-lg mb-2 truncate group-hover:text-cyan transition-colors">
-            {campaign.title}
-          </h3>
-        </Link>
-        <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-          {campaign.description}
-        </p>
-        
-        <div className="mb-2 flex justify-between text-xs font-bold font-orbitron">
-          <span className="text-white">${campaign.raisedAmount.toLocaleString()}</span>
-          <span className="text-gray-500">of ${campaign.goalAmount.toLocaleString()}</span>
-        </div>
-        
-        <ProgressBar progress={percent} />
-        
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center gap-2">
-            <img src={campaign.creator?.avatar || '/default-avatar.png'} alt="Creator" className="w-5 h-5 rounded-full" />
-            <span>by {campaign.creator?.name || 'Unknown'}</span>
+      <Link to={`/campaigns/${campaign.slug || campaign._id}`} style={{ display: 'block' }}>
+        <div className="card" id={`campaign-card-${campaign._id}`}>
+          {/* Cover Image */}
+          <div style={{ aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#E5E7EB' }}>
+            <img
+              src={campaign.coverImage}
+              alt={campaign.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+              loading="lazy"
+            />
           </div>
-          <span>{campaign.daysLeft} days left</span>
+
+          {/* Content */}
+          <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            {/* Category Badge */}
+            <div>
+              <span className={`badge ${categoryColors[campaign.category] || 'badge-neutral'}`}>
+                {campaign.category}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h3 className="line-clamp-2" style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-semibold)' }}>
+              {campaign.title}
+            </h3>
+
+            {/* Creator */}
+            <div className="flex items-center gap-2">
+              <div className="avatar avatar-sm" style={{ width: '24px', height: '24px', fontSize: '0.65rem' }}>
+                {campaign.beneficiary?.avatar && campaign.beneficiary.avatar !== '/default-avatar.png' ? (
+                  <img src={campaign.beneficiary.avatar} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  getInitial(campaign.beneficiary?.name)
+                )}
+              </div>
+              <span className="text-sm text-secondary">
+                by {campaign.beneficiary?.name || 'Unknown'}
+              </span>
+            </div>
+
+            {/* Progress */}
+            <div style={{ marginTop: 'var(--space-1)' }}>
+              <ProgressBar current={campaign.amountRaisedCents} goal={campaign.goalAmountCents} />
+            </div>
+
+            {/* Stats */}
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="font-semibold" style={{ color: 'var(--color-secondary)' }}>
+                  ${raised.toLocaleString()}
+                </span>
+                <span className="text-sm text-muted"> raised of ${goal.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+              <span>{campaign.backersCount || 0} backers</span>
+              <span>{daysLeft} days left</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
-};
-
-export default CampaignCard;
+}

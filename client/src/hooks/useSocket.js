@@ -1,33 +1,36 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { useCampaignStore } from '../store/campaignStore';
 
-const socket = io('/', {
-  transports: ['websocket'],
-  autoConnect: true,
-});
-
-export const useSocket = (campaignId) => {
-  const updateCampaignProgress = useCampaignStore((state) => state.updateCampaignProgress);
+/**
+ * Hook to connect to Socket.IO and listen for real-time campaign funding updates.
+ * @param {string} campaignId - The campaign ID to join the room for
+ * @param {function} onUpdate - Callback when a funding update is received
+ */
+export function useSocket(campaignId, onUpdate) {
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    if (campaignId) {
+    if (!campaignId) return;
+
+    // Connect to the server
+    socketRef.current = io({
+      transports: ['websocket', 'polling'],
+    });
+
+    const socket = socketRef.current;
+
+    socket.on('connect', () => {
       socket.emit('joinCampaign', campaignId);
-    }
+    });
 
-    const handleUpdate = (data) => {
-      // data = { raisedAmount, backersCount }
-      if (campaignId) {
-        updateCampaignProgress(campaignId, data.raisedAmount, data.backersCount);
-      }
-    };
-
-    socket.on('fundingUpdate', handleUpdate);
+    socket.on('fundingUpdate', (data) => {
+      if (onUpdate) onUpdate(data);
+    });
 
     return () => {
-      socket.off('fundingUpdate', handleUpdate);
+      socket.disconnect();
     };
-  }, [campaignId, updateCampaignProgress]);
+  }, [campaignId]);
 
-  return socket;
-};
+  return socketRef.current;
+}

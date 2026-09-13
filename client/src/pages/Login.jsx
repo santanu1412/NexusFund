@@ -1,67 +1,71 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
-const Login = () => {
-  const { register, handleSubmit } = useForm();
-  const login = useAuthStore((state) => state.login);
+export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       await login(data.email, data.password);
-      toast.success('Welcome back, Commander.');
+      toast.success('Welcome back!');
       navigate('/dashboard');
-    } catch (error) {
-      toast.error('Invalid credentials');
+    } catch (err) {
+      toast.error(err.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <div className="w-full max-w-md p-8 glass-card border-t-4 border-cyan">
-        <h2 className="text-3xl font-orbitron font-bold text-center mb-8">System Login</h2>
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Email Access</label>
-            <input 
-              {...register('email')}
+    <div className="auth-page">
+      <div className="auth-card animate-fadeIn">
+        <h1>Welcome Back</h1>
+        <p className="auth-subtitle">Log in to your NexusFund account</p>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
               type="email"
-              className="w-full bg-dark/50 border border-white/10 p-3 rounded text-white focus:border-cyan outline-none"
-              placeholder="user@nexus.io"
+              className={`form-input ${errors.email ? 'form-input-error' : ''}`}
+              placeholder="you@example.com"
+              {...register('email', { required: 'Email is required' })}
             />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Security Key</label>
-            <input 
-              {...register('password')}
-              type="password"
-              className="w-full bg-dark/50 border border-white/10 p-3 rounded text-white focus:border-cyan outline-none"
-              placeholder="••••••••"
-            />
+            {errors.email && <span className="form-error">{errors.email.message}</span>}
           </div>
 
-          <button 
-            disabled={loading}
-            className="w-full py-3 bg-cyan text-black font-bold font-orbitron hover:bg-cyan/90 transition-colors"
-          >
-            {loading ? 'Authenticating...' : 'INITIALIZE SESSION'}
+          <div className="form-group">
+            <div className="flex justify-between items-center">
+              <label className="form-label" htmlFor="login-password">Password</label>
+              <Link to="#" className="text-xs text-primary" style={{ fontWeight: 'var(--font-medium)' }}>Forgot password?</Link>
+            </div>
+            <input
+              id="login-password"
+              type="password"
+              className={`form-input ${errors.password ? 'form-input-error' : ''}`}
+              placeholder="Enter your password"
+              {...register('password', { required: 'Password is required' })}
+            />
+            {errors.password && <span className="form-error">{errors.password.message}</span>}
+          </div>
+
+          <button type="submit" className="btn btn-primary btn-lg btn-full" disabled={loading} id="login-submit">
+            {loading ? <div className="spinner spinner-sm" style={{ borderTopColor: '#fff', borderColor: 'rgba(255,255,255,0.3)' }} /> : 'Log In'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          New to Nexus? <Link to="/register" className="text-cyan hover:underline">Register Identity</Link>
+        <p className="auth-footer">
+          Don't have an account? <Link to="/register">Sign up</Link>
         </p>
       </div>
     </div>
   );
-};
-
-export default Login;
+}

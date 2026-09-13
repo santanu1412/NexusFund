@@ -5,6 +5,7 @@ import {
   createCampaign,
   updateCampaign,
   deleteCampaign,
+  getMyCampaigns,
   listAllCampaigns,
   approveCampaign,
   rejectCampaign,
@@ -20,6 +21,10 @@ router.put('/admin/:id/reject', protect, requireRole('admin'), rejectCampaign);
 
 // Public routes
 router.get('/', getCampaigns);
+
+// Authenticated user routes (must be before /:slugOrId)
+router.get('/my', protect, getMyCampaigns);
+
 router.get('/:slugOrId', getCampaignBySlugOrId);
 
 // Protected routes

@@ -1,20 +1,16 @@
 import { motion } from 'framer-motion';
 
-const ProgressBar = ({ progress, color = "cyan" }) => {
-  const percentage = Math.min(progress, 100);
-  
+export default function ProgressBar({ current, goal, large = false }) {
+  const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
+
   return (
-    <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden relative">
+    <div className={`progress-track ${large ? 'progress-track-lg' : ''}`}>
       <motion.div
+        className="progress-fill"
         initial={{ width: 0 }}
         animate={{ width: `${percentage}%` }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className={`h-full absolute top-0 left-0 ${
-          color === "cyan" ? "bg-cyan shadow-[0_0_10px_#00f5ff]" : "bg-violet"
-        }`}
+        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
       />
     </div>
   );
-};
-
-export default ProgressBar;
+}

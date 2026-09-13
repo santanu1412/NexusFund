@@ -1,52 +1,85 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { useAuthStore } from './store/authStore';
+
+// Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+
+// Auth
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+// Pages
 import Home from './pages/Home';
+import Explore from './pages/Explore';
+import CampaignDetail from './pages/CampaignDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
 import CreateCampaign from './pages/CreateCampaign';
-import CampaignDetail from './pages/CampaignDetail';
+import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 import PaymentSuccess from './pages/PaymentSuccess';
-import { Toaster } from 'react-hot-toast';
+import HowItWorks from './pages/HowItWorks';
+import NotFound from './pages/NotFound';
 
 function App() {
+  const { checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
   return (
-    <div className="min-h-screen bg-dark text-white font-sora relative overflow-x-hidden">
-      {/* Global Toast Notifications */}
+    <>
+      {/* Toast Notifications */}
       <Toaster
         position="top-center"
         toastOptions={{
+          duration: 4000,
           style: {
-            background: '#0a0a0f',
-            color: '#fff',
-            border: '1px solid #00f5ff',
+            background: '#fff',
+            color: '#111827',
+            border: '1px solid #E5E7EB',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+            fontSize: '14px',
+            fontFamily: 'Inter, sans-serif',
+          },
+          success: {
+            iconTheme: { primary: '#10B981', secondary: '#fff' },
+          },
+          error: {
+            iconTheme: { primary: '#EF4444', secondary: '#fff' },
           },
         }}
       />
-      
-      {/* Background Ambient Mesh (CSS only) */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan/10 rounded-full blur-[120px]" />
-      </div>
 
-      <div className="relative z-10">
-        <Navbar />
-        <main className="pt-20 pb-10 px-4 max-w-7xl mx-auto">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/create" element={<CreateCampaign />} />
-            <Route path="/campaigns/:id" element={<CampaignDetail />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </div>
+      <Navbar />
+
+      <main>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/campaigns/:id" element={<CampaignDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/create" element={<ProtectedRoute><CreateCampaign /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      <Footer />
+    </>
   );
 }
 
