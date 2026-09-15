@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const rewardSchema = new mongoose.Schema(
   {
     campaign: {
@@ -26,15 +25,16 @@ const rewardSchema = new mongoose.Schema(
     },
     maxBackers: {
       type: Number,
-      default: 0, // 0 = unlimited
+      default: 0,
     },
     currentBackers: {
       type: Number,
       default: 0,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
 const Reward = mongoose.model('Reward', rewardSchema);
 export default Reward;

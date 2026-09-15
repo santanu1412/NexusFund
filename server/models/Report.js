@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const reportSchema = new mongoose.Schema(
   {
     campaign: {
@@ -35,11 +34,15 @@ const reportSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-reportSchema.index({ campaign: 1 });
-reportSchema.index({ status: 1 });
-
+reportSchema.index({
+  campaign: 1,
+});
+reportSchema.index({
+  status: 1,
+});
 const Report = mongoose.model('Report', reportSchema);
 export default Report;

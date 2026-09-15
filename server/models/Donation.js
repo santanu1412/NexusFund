@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const donationSchema = new mongoose.Schema(
   {
     amountCents: {
@@ -15,7 +14,7 @@ const donationSchema = new mongoose.Schema(
     donor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      default: null, // nullable for guest donations
+      default: null,
     },
     guestName: {
       type: String,
@@ -43,20 +42,27 @@ const donationSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-// Virtual: amount in dollars for display
 donationSchema.virtual('amountDollars').get(function () {
   return (this.amountCents / 100).toFixed(2);
 });
-
-donationSchema.set('toJSON', { virtuals: true });
-donationSchema.set('toObject', { virtuals: true });
-
-donationSchema.index({ campaign: 1 });
-donationSchema.index({ donor: 1 });
-donationSchema.index({ status: 1 });
-
+donationSchema.set('toJSON', {
+  virtuals: true,
+});
+donationSchema.set('toObject', {
+  virtuals: true,
+});
+donationSchema.index({
+  campaign: 1,
+});
+donationSchema.index({
+  donor: 1,
+});
+donationSchema.index({
+  status: 1,
+});
 const Donation = mongoose.model('Donation', donationSchema);
 export default Donation;

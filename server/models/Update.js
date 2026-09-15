@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const updateSchema = new mongoose.Schema(
   {
     campaign: {
@@ -18,10 +17,13 @@ const updateSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-updateSchema.index({ campaign: 1, createdAt: -1 });
-
+updateSchema.index({
+  campaign: 1,
+  createdAt: -1,
+});
 const Update = mongoose.model('Update', updateSchema);
 export default Update;

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const commentSchema = new mongoose.Schema(
   {
     campaign: {
@@ -19,10 +18,13 @@ const commentSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-commentSchema.index({ campaign: 1, createdAt: -1 });
-
+commentSchema.index({
+  campaign: 1,
+  createdAt: -1,
+});
 const Comment = mongoose.model('Comment', commentSchema);
 export default Comment;

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const auditLogSchema = new mongoose.Schema(
   {
     action: {
@@ -35,12 +34,19 @@ const auditLogSchema = new mongoose.Schema(
       default: {},
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-auditLogSchema.index({ performedBy: 1 });
-auditLogSchema.index({ targetType: 1, targetId: 1 });
-auditLogSchema.index({ createdAt: -1 });
-
+auditLogSchema.index({
+  performedBy: 1,
+});
+auditLogSchema.index({
+  targetType: 1,
+  targetId: 1,
+});
+auditLogSchema.index({
+  createdAt: -1,
+});
 const AuditLog = mongoose.model('AuditLog', auditLogSchema);
 export default AuditLog;

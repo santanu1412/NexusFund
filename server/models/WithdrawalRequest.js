@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const withdrawalRequestSchema = new mongoose.Schema(
   {
     campaign: {
@@ -37,20 +36,27 @@ const withdrawalRequestSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-// Virtual: amount in dollars for display
 withdrawalRequestSchema.virtual('amountDollars').get(function () {
   return (this.amountCents / 100).toFixed(2);
 });
-
-withdrawalRequestSchema.set('toJSON', { virtuals: true });
-withdrawalRequestSchema.set('toObject', { virtuals: true });
-
-withdrawalRequestSchema.index({ beneficiary: 1 });
-withdrawalRequestSchema.index({ campaign: 1 });
-withdrawalRequestSchema.index({ status: 1 });
-
+withdrawalRequestSchema.set('toJSON', {
+  virtuals: true,
+});
+withdrawalRequestSchema.set('toObject', {
+  virtuals: true,
+});
+withdrawalRequestSchema.index({
+  beneficiary: 1,
+});
+withdrawalRequestSchema.index({
+  campaign: 1,
+});
+withdrawalRequestSchema.index({
+  status: 1,
+});
 const WithdrawalRequest = mongoose.model('WithdrawalRequest', withdrawalRequestSchema);
 export default WithdrawalRequest;
